@@ -32,11 +32,6 @@
     <script>
         const SEEN_KEY = 'aero_seen_codes';
 
-        function checkReferrer() {
-            const ref = document.referrer.toLowerCase();
-            return ref.includes('work.ink') || ref.includes('lootlabs') || ref.includes('loot-labs');
-        }
-
         function hasBeenSeen(code) {
             try {
                 const seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}');
@@ -119,11 +114,6 @@
 
             if (hasBeenSeen(data.session)) {
                 showError('already used', "u already got this code. it only shows once. go back and start a new session if ur key expired");
-                return;
-            }
-
-            if (!checkReferrer()) {
-                showError('wrong referrer', "u didn't come from lootlabs. actually complete the task to get here properly");
                 return;
             }
 
