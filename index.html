@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>completion verified</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        body {font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #ffffff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;}
+        .container {background: rgba(18, 18, 27, 0.85); backdrop-filter: blur(20px); border-radius: 16px; padding: 48px; max-width: 500px; width: 100%; border: 1px solid rgba(138, 43, 226, 0.2); text-align: center;}
+        .checkmark {font-size: 64px; margin-bottom: 16px;}
+        h1 {font-size: 32px; font-weight: 700; background: linear-gradient(135deg, #22c55e, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;}
+        .subtitle {color: rgba(255, 255, 255, 0.6); font-size: 14px; margin-bottom: 32px; text-transform: lowercase;}
+        .code-box {background: rgba(20, 20, 30, 0.8); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; letter-spacing: 6px; margin: 24px 0; cursor: pointer; transition: all 0.3s; user-select: all;}
+        .code-box:hover {border-color: #22c55e; background: rgba(20, 20, 30, 0.95); transform: translateY(-2px);}
+        .copy-hint {font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 12px; text-transform: lowercase; user-select: none;}
+        .instructions {background: rgba(30, 30, 45, 0.5); border-radius: 12px; padding: 20px; margin-top: 24px; text-align: left;}
+        .instructions h3 {color: #22c55e; font-size: 14px; margin-bottom: 12px; text-transform: lowercase;}
+        .instructions ol {margin-left: 20px; color: rgba(255, 255, 255, 0.7); font-size: 13px; line-height: 1.8;}
+        .instructions li {margin-bottom: 8px; text-transform: lowercase;}
+        .warning {background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px; margin-top: 20px; font-size: 12px; color: rgba(255, 255, 255, 0.7); text-transform: lowercase;}
+        .error-icon {font-size: 64px; margin-bottom: 16px;}
+        .error-title {font-size: 28px; color: #ef4444; margin-bottom: 8px; font-weight: 700; text-transform: lowercase;}
+        .error-text {color: rgba(255, 255, 255, 0.6); font-size: 14px; text-transform: lowercase; margin-bottom: 8px;}
+    </style>
+</head>
+<body>
+    <div class="container" id="container"></div>
+    <script>
+        const SEEN_KEY = 'aero_seen_codes';
 
+        function checkReferrer() {
+            const ref = document.referrer.toLowerCase();
+            return ref.includes('work.ink') || ref.includes('lootlabs') || ref.includes('loot-labs');
+        }
+
+        function hasBeenSeen(code) {
+            try {
+                const seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}');
+                return seen[code] === true;
+            } catch { return false; }
+        }
+
+        function markSeen(code) {
+            try {
+                const seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}');
+                seen[code] = true;
+                localStorage.setItem(SEEN_KEY, JSON.stringify(seen));
+            } catch {}
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                const hint = document.querySelector('.copy-hint');
+                if (hint) {
+                    hint.textContent = 'copied! ✓';
+                    hint.style.color = '#22c55e';
+                    setTimeout(() => {
+                        hint.textContent = 'click to copy';
+                        hint.style.color = '';
+                    }, 2000);
+                }
+            }).catch(() => prompt('copy this code:', code));
+        }
+
+        function showError(title, msg) {
+            document.getElementById('container').innerHTML = `
+                <div class="error-icon">❌</div>
+                <div class="error-title">${title}</div>
+                <div class="error-text">${msg}</div>
+            `;
+        }
+
+        function showSuccess(code) {
+            document.getElementById('container').innerHTML = `
+                <div class="checkmark">✓</div>
+                <h1>task done!</h1>
+                <div class="subtitle">nice work, here's ur completion code</div>
+                <div class="code-box" onclick="copyCode('${code}')">
+                    ${code}
+                    <div class="copy-hint">click to copy</div>
+                </div>
+                <div class="instructions">
+                    <h3>⚠️ read this:</h3>
+                    <ol>
+                        <li>copy the code above</li>
+                        <li>go back to the aerov4 key site</li>
+                        <li>paste the code in the box</li>
+                        <li>this code only works once per session</li>
+                        <li>don't refresh or u lose it</li>
+                    </ol>
+                </div>
+                <div class="warning">⚠️ this code can only be used once. after u paste it back on the key site u can generate ur actual key</div>
+            `;
+        }
+
+        window.onload = () => {
+            const stored = localStorage.getItem('aero_session');
+            if (!stored) {
+                showError('no session found', "u didn't come from the aerov4 key site. go there first and click 'start lootlabs'");
+                return;
+            }
+
+            let data;
+            try {
+                data = JSON.parse(stored);
+            } catch {
+                showError('session corrupted', 'something went wrong. go back to the key site and start over');
+                return;
+            }
+
+            if (!data.session || data.session.length !== 8) {
+                showError('invalid session', 'session code is messed up. go back and start over');
+                return;
+            }
+
+            if (hasBeenSeen(data.session)) {
+                showError('already used', "u already got this code. it only shows once. go back and start a new session if ur key expired");
+                return;
+            }
+
+            if (!checkReferrer()) {
+                showError('wrong referrer', "u didn't come from lootlabs. actually complete the task to get here properly");
+                return;
+            }
+
+            markSeen(data.session);
+            showSuccess(data.session);
+        };
+    </script>
+</body>
+</html>
