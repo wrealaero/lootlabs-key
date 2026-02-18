@@ -3,122 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>completion verified</title>
+    <title>aerov4 key system</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
         body {font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #ffffff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;}
-        .container {background: rgba(18, 18, 27, 0.85); backdrop-filter: blur(20px); border-radius: 16px; padding: 48px; max-width: 500px; width: 100%; border: 1px solid rgba(138, 43, 226, 0.2); text-align: center;}
-        .checkmark {font-size: 64px; margin-bottom: 16px;}
-        h1 {font-size: 32px; font-weight: 700; background: linear-gradient(135deg, #22c55e, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;}
-        .subtitle {color: rgba(255, 255, 255, 0.6); font-size: 14px; margin-bottom: 32px; text-transform: lowercase;}
-        .code-box {background: rgba(20, 20, 30, 0.8); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; letter-spacing: 6px; margin: 24px 0; cursor: pointer; transition: all 0.3s; user-select: all;}
-        .code-box:hover {border-color: #22c55e; background: rgba(20, 20, 30, 0.95); transform: translateY(-2px);}
-        .copy-hint {font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 12px; text-transform: lowercase; user-select: none;}
-        .instructions {background: rgba(30, 30, 45, 0.5); border-radius: 12px; padding: 20px; margin-top: 24px; text-align: left;}
-        .instructions h3 {color: #22c55e; font-size: 14px; margin-bottom: 12px; text-transform: lowercase;}
-        .instructions ol {margin-left: 20px; color: rgba(255, 255, 255, 0.7); font-size: 13px; line-height: 1.8;}
-        .instructions li {margin-bottom: 8px; text-transform: lowercase;}
-        .warning {background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px; margin-top: 20px; font-size: 12px; color: rgba(255, 255, 255, 0.7); text-transform: lowercase;}
-        .error-icon {font-size: 64px; margin-bottom: 16px;}
-        .error-title {font-size: 28px; color: #ef4444; margin-bottom: 8px; font-weight: 700; text-transform: lowercase;}
-        .error-text {color: rgba(255, 255, 255, 0.6); font-size: 14px; text-transform: lowercase; margin-bottom: 8px;}
+        .container {background: rgba(18, 18, 27, 0.85); backdrop-filter: blur(20px); border-radius: 16px; padding: 40px; max-width: 500px; width: 100%; border: 1px solid rgba(138, 43, 226, 0.2);}
+        h1 {font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #a855f7, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; text-align: center;}
+        .subtitle {color: rgba(255, 255, 255, 0.5); font-size: 13px; text-align: center; margin-bottom: 32px;}
+        .form-group {margin-bottom: 20px;}
+        label {display: block; margin-bottom: 8px; color: rgba(255, 255, 255, 0.7); font-size: 12px; text-transform: lowercase;}
+        input {width: 100%; background: rgba(30, 30, 45, 0.6); border: 1px solid rgba(138, 43, 226, 0.3); border-radius: 8px; padding: 12px; color: #ffffff; font-family: 'JetBrains Mono', monospace; font-size: 13px;}
+        input:focus {outline: none; border-color: #a855f7;}
+        input::placeholder {color: rgba(255, 255, 255, 0.3);}
+        .btn {width: 100%; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; border-radius: 8px; padding: 14px; color: white; font-weight: 700; font-size: 13px; cursor: pointer; transition: opacity 0.2s; text-transform: lowercase;}
+        .btn:hover {opacity: 0.9;}
+        .btn:disabled {opacity: 0.5; cursor: not-allowed;}
+        .btn:active {transform: scale(0.98);}
+        .alert {background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 12px; color: rgba(255, 255, 255, 0.8); text-transform: lowercase;}
+        .alert.success {background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3);}
+        .alert.error {background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5;}
+        .code-display {background: rgba(20, 20, 30, 0.8); border: 1px solid rgba(138, 43, 226, 0.3); border-radius: 8px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: left; margin: 20px 0; cursor: pointer; transition: all 0.2s; white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; max-height: 300px; overflow-y: auto; user-select: all;}
+        .code-display:hover {border-color: #a855f7; background: rgba(30, 30, 40, 0.9);}
+        .copy-btn {width: 100%; background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.5); border-radius: 8px; padding: 10px; color: white; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s; text-transform: lowercase; margin-top: 8px;}
+        .copy-btn:hover {background: rgba(168, 85, 247, 0.3);}
+        .copy-btn:active {transform: scale(0.98);}
+        .step-info {background: rgba(30, 30, 45, 0.4); border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 11px; color: rgba(255, 255, 255, 0.6); text-transform: lowercase; line-height: 1.8;}
     </style>
 </head>
 <body>
-    <div class="container" id="container"></div>
+    <div class="container">
+        <h1>aerov4</h1>
+        <div class="subtitle">free key system</div>
+        <div id="content"></div>
+    </div>
     <script>
-        const SEEN_KEY = 'aero_seen_codes';
+        const LOOTLABS_URL = 'https://work.ink/1YyH/aerov4-free-key-system';
+        const SECRET = 'AERO_SECRET_2025';
 
-        function hasBeenSeen(code) {
-            try {
-                const seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}');
-                return seen[code] === true;
-            } catch { return false; }
+        function generateSessionCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
         }
 
-        function markSeen(code) {
-            try {
-                const seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}');
-                seen[code] = true;
-                localStorage.setItem(SEEN_KEY, JSON.stringify(seen));
-            } catch {}
+        function hwidToHash(hwid) {
+            let hash = '';
+            for (let i = 0; i < hwid.length; i++) {
+                hash += hwid.charCodeAt(i).toString(16).padStart(2, '0');
+            }
+            return hash.substring(0, 16);
         }
 
-        function copyCode(code) {
-            navigator.clipboard.writeText(code).then(() => {
-                const hint = document.querySelector('.copy-hint');
-                if (hint) {
-                    hint.textContent = 'copied! ✓';
-                    hint.style.color = '#22c55e';
-                    setTimeout(() => {
-                        hint.textContent = 'click to copy';
-                        hint.style.color = '';
-                    }, 2000);
+        function buildSignature(session, hwidHash, ts) {
+            const base = session + hwidHash + ts + SECRET;
+            let sig = '';
+            for (let i = 0; i < base.length; i++) {
+                sig += (base.charCodeAt(i) % 16).toString(16);
+            }
+            return sig.substring(0, 12);
+        }
+
+        function buildKey(hwid) {
+            const session = generateSessionCode();
+            const hwidHash = hwidToHash(hwid);
+            const ts = Math.floor(Date.now() / 1000);
+            const sig = buildSignature(session, hwidHash, ts);
+            return 'AEROV4_' + session + '_' + hwidHash + '_' + ts + '_' + sig;
+        }
+
+        function showStep1() {
+            document.getElementById('content').innerHTML = `
+                <div class="alert">yo welcome. u gotta complete the lootlabs task to get a key</div>
+                <div class="step-info">1. click the button below<br>2. complete the task<br>3. come back here and paste the code u get<br>4. then enter ur hwid to generate ur key</div>
+                <button class="btn" onclick="startLootlabs()">start lootlabs</button>
+            `;
+        }
+
+        function startLootlabs() {
+            const session = generateSessionCode();
+            const data = { session: session, timestamp: Date.now() };
+            localStorage.setItem('aero_session', JSON.stringify(data));
+            window.open(LOOTLABS_URL, '_blank');
+            setTimeout(() => showStep2(session), 1000);
+        }
+
+        function showStep2(session) {
+            document.getElementById('content').innerHTML = `
+                <div class="alert">aight cool, paste the completion code from the task below</div>
+                <div class="form-group">
+                    <label>completion code</label>
+                    <input type="text" id="codeInput" placeholder="paste code here...">
+                </div>
+                <button class="btn" onclick="verifyCode('${session}')">verify</button>
+                <div style="text-align: center; margin-top: 16px;"><a href="#" onclick="showStep1(); return false;" style="color: rgba(255,255,255,0.5); font-size: 11px; text-decoration: none;">start over</a></div>
+            `;
+        }
+
+        function verifyCode(session) {
+            const input = document.getElementById('codeInput').value.trim().toUpperCase();
+            if (!input) { showError('bro paste something lol'); return; }
+
+            const stored = JSON.parse(localStorage.getItem('aero_session') || '{}');
+            if (!stored.session) { showError('session expired. start over'); return; }
+            if (Date.now() - stored.timestamp < 15000) { showError('nah too fast. actually do the task first bro'); return; }
+            if (input !== stored.session) { showError('wrong code. make sure u copied it from the completion page'); return; }
+
+            showStep3(stored.session);
+        }
+
+        function showStep3(verifiedSession) {
+            const script = `local function getHWID()
+    if gethwid then return gethwid() end
+    if getexecutorname then
+        local name = getexecutorname()
+        local str = name .. tostring(game:GetService("UserInputService"):GetGamepadState(Enum.UserInputType.Gamepad1))
+        if syn and syn.crypt and syn.crypt.hash then return syn.crypt.hash(str) end
+        if crypt and crypt.hash then return crypt.hash(str) end
+        return game:GetService("HttpService"):GenerateGUID(false)
+    end
+    if game:GetService("RbxAnalyticsService") then
+        local ok, res = pcall(function() return game:GetService("RbxAnalyticsService"):GetClientId() end)
+        if ok and res then return res end
+    end
+    return tostring(math.random(100000, 999999)) .. tostring(os.time())
+end
+local hwid = getHWID()
+setclipboard(hwid)
+print("hwid: " .. hwid)`;
+
+            document.getElementById('content').innerHTML = `
+                <div class="alert success">nice work! now we need ur hwid to lock the key to ur device</div>
+                <div class="step-info">1. copy the script below<br>2. run it in ur executor while in roblox<br>3. it copies ur hwid automatically<br>4. paste it in the box below</div>
+                <div class="code-display" id="scriptCode">${script}</div>
+                <button class="copy-btn" onclick="copyScript()">copy script</button>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>paste ur hwid here</label>
+                    <input type="text" id="hwidInput" placeholder="paste hwid...">
+                </div>
+                <button class="btn" onclick="generateKey('')">generate my key</button>
+            `;
+        }
+
+        function copyScript() {
+            const text = document.getElementById('scriptCode').textContent.trim();
+            copyToClipboard(text, 'script copied! now run it in ur executor');
+        }
+
+        function generateKey(verifiedSession) {
+            const hwid = document.getElementById('hwidInput').value.trim();
+            if (!hwid || hwid.length < 5) { showError('hwid looks empty or invalid bro'); return; }
+
+            const usedKey = 'aero_used_session';
+            try {
+                const used = JSON.parse(localStorage.getItem(usedKey) || '{}');
+                if (verifiedSession && used[verifiedSession]) {
+                    showError('u already generated a key for this session. do lootlabs again to get a new one');
+                    return;
                 }
-            }).catch(() => prompt('copy this code:', code));
+            } catch {}
+
+            const key = buildKey(hwid);
+
+            try {
+                const used = JSON.parse(localStorage.getItem(usedKey) || '{}');
+                if (verifiedSession) {
+                    used[verifiedSession] = { hwid: hwidToHash(hwid), ts: Date.now() };
+                    localStorage.setItem(usedKey, JSON.stringify(used));
+                }
+            } catch {}
+
+            localStorage.removeItem('aero_session');
+
+            showStep4(key, hwid);
         }
 
-        function showError(title, msg) {
-            document.getElementById('container').innerHTML = `
-                <div class="error-icon">❌</div>
-                <div class="error-title">${title}</div>
-                <div class="error-text">${msg}</div>
+        function showStep4(key, hwid) {
+            document.getElementById('content').innerHTML = `
+                <div class="alert success">ur key is ready! copy it and paste it in the aerov4 ui ingame</div>
+                <div class="code-display" style="text-align: center; font-size: 10px; letter-spacing: 1px;">${key}</div>
+                <button class="btn" onclick="copyToClipboard('${key}', 'key copied!')">copy key</button>
+                <div class="step-info" style="margin-top: 16px;">key is locked to ur hwid and expires in 8 hours from now<br>if it expires u gotta come back and get a new one</div>
             `;
         }
 
-        function showSuccess(code) {
-            document.getElementById('container').innerHTML = `
-                <div class="checkmark">✓</div>
-                <h1>task done!</h1>
-                <div class="subtitle">nice work, here's ur completion code</div>
-                <div class="code-box" onclick="copyCode('${code}')">
-                    ${code}
-                    <div class="copy-hint">click to copy</div>
-                </div>
-                <div class="instructions">
-                    <h3>⚠️ read this:</h3>
-                    <ol>
-                        <li>copy the code above</li>
-                        <li>go back to the aerov4 key site</li>
-                        <li>paste the code in the box</li>
-                        <li>this code only works once per session</li>
-                        <li>don't refresh or u lose it</li>
-                    </ol>
-                </div>
-                <div class="warning">⚠️ this code can only be used once. after u paste it back on the key site u can generate ur actual key</div>
-            `;
+        function showError(msg) {
+            const existing = document.querySelector('.alert.error');
+            if (existing) existing.remove();
+            const div = document.createElement('div');
+            div.className = 'alert error';
+            div.textContent = msg;
+            document.getElementById('content').insertBefore(div, document.getElementById('content').firstChild);
+            setTimeout(() => { if (div.parentNode) div.remove(); }, 5000);
+        }
+
+        function copyToClipboard(text, msg) {
+            navigator.clipboard.writeText(text).then(() => {
+                showError(msg);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); showError(msg); } catch { prompt('copy this:', text); }
+                document.body.removeChild(ta);
+            });
         }
 
         window.onload = () => {
-            const stored = localStorage.getItem('aero_session');
-            if (!stored) {
-                showError('no session found', "u didn't come from the aerov4 key site. go there first and click 'start lootlabs'");
-                return;
-            }
-
-            let data;
             try {
-                data = JSON.parse(stored);
-            } catch {
-                showError('session corrupted', 'something went wrong. go back to the key site and start over');
-                return;
-            }
+                const usedKey = 'aero_used_session';
+                const used = JSON.parse(localStorage.getItem(usedKey) || '{}');
+                const cutoff = Date.now() - (24 * 60 * 60 * 1000);
+                let changed = false;
+                for (const k in used) {
+                    if (used[k].ts && used[k].ts < cutoff) { delete used[k]; changed = true; }
+                }
+                if (changed) localStorage.setItem(usedKey, JSON.stringify(used));
+            } catch {}
 
-            if (!data.session || data.session.length !== 8) {
-                showError('invalid session', 'session code is messed up. go back and start over');
-                return;
+            const stored = localStorage.getItem('aero_session');
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    if (data.session && Date.now() - data.timestamp < 300000) {
+                        showStep2(data.session);
+                        return;
+                    }
+                } catch {}
+                localStorage.removeItem('aero_session');
             }
-
-            if (hasBeenSeen(data.session)) {
-                showError('already used', "u already got this code. it only shows once. go back and start a new session if ur key expired");
-                return;
-            }
-
-            markSeen(data.session);
-            showSuccess(data.session);
+            showStep1();
         };
     </script>
 </body>
