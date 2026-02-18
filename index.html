@@ -14,54 +14,60 @@
         .checkmark {font-size: 64px; margin-bottom: 16px;}
         h1 {font-size: 32px; font-weight: 700; background: linear-gradient(135deg, #22c55e, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;}
         .subtitle {color: rgba(255, 255, 255, 0.6); font-size: 14px; margin-bottom: 32px; text-transform: lowercase;}
-        .code-box {background: rgba(20, 20, 30, 0.8); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; letter-spacing: 6px; margin: 24px 0; cursor: pointer; transition: all 0.3s; user-select: all;}
+        .code-box {background: rgba(20, 20, 30, 0.8); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; letter-spacing: 4px; margin: 24px 0; cursor: pointer; transition: all 0.3s;}
         .code-box:hover {border-color: #22c55e; background: rgba(20, 20, 30, 0.95); transform: translateY(-2px);}
-        .copy-hint {font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 12px; text-transform: lowercase; user-select: none;}
+        .copy-hint {font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 8px; text-transform: lowercase;}
         .instructions {background: rgba(30, 30, 45, 0.5); border-radius: 12px; padding: 20px; margin-top: 24px; text-align: left;}
         .instructions h3 {color: #22c55e; font-size: 14px; margin-bottom: 12px; text-transform: lowercase;}
         .instructions ol {margin-left: 20px; color: rgba(255, 255, 255, 0.7); font-size: 13px; line-height: 1.8;}
         .instructions li {margin-bottom: 8px; text-transform: lowercase;}
         .warning {background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px; margin-top: 20px; font-size: 12px; color: rgba(255, 255, 255, 0.7); text-transform: lowercase;}
         .error-icon {font-size: 64px; margin-bottom: 16px;}
-        .error-title {font-size: 28px; color: #ef4444; margin-bottom: 8px; font-weight: 700; text-transform: lowercase;}
+        .error-title {font-size: 28px; color: #ef4444; margin-bottom: 8px; font-weight: 700;}
         .error-text {color: rgba(255, 255, 255, 0.6); font-size: 14px; text-transform: lowercase; margin-bottom: 8px;}
     </style>
 </head>
 <body>
     <div class="container" id="container"></div>
     <script>
-        const SEEN_KEY = 'aero_seen_codes';
+        const USED_KEY = 'aero_used';
 
         function checkReferrer() {
             const ref = document.referrer.toLowerCase();
-            return ref.includes('work.ink') || ref.includes('lootlabs') || ref.includes('loot-labs');
+            return ref.includes('lootlabs.com') || ref.includes('lootlabs');
         }
 
-        function hasBeenSeen(code) {
+        function isUsed(code) {
             try {
-                const seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}');
-                return seen[code] === true;
-            } catch { return false; }
+                const used = JSON.parse(localStorage.getItem(USED_KEY) || '{}');
+                return used[code] === true;
+            } catch {
+                return false;
+            }
         }
 
-        function markSeen(code) {
+        function markUsed(code) {
             try {
-                const seen = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}');
-                seen[code] = true;
-                localStorage.setItem(SEEN_KEY, JSON.stringify(seen));
+                const used = JSON.parse(localStorage.getItem(USED_KEY) || '{}');
+                used[code] = true;
+                localStorage.setItem(USED_KEY, JSON.stringify(used));
             } catch {}
         }
 
         function copyCode(code) {
             navigator.clipboard.writeText(code).then(() => {
-                const hint = document.querySelector('.copy-hint');
-                if (hint) {
-                    hint.textContent = 'copied! ✓';
-                    hint.style.color = '#22c55e';
-                    setTimeout(() => {
-                        hint.textContent = 'click to copy';
-                        hint.style.color = '';
-                    }, 2000);
+                const box = document.querySelector('.code-box');
+                if (box) {
+                    const hint = box.querySelector('.copy-hint');
+                    if (hint) {
+                        const orig = hint.textContent;
+                        hint.textContent = 'copied! ✓';
+                        hint.style.color = '#22c55e';
+                        setTimeout(() => {
+                            hint.textContent = orig;
+                            hint.style.color = '';
+                        }, 2000);
+                    }
                 }
             }).catch(() => prompt('copy this code:', code));
         }
@@ -77,8 +83,8 @@
         function showSuccess(code) {
             document.getElementById('container').innerHTML = `
                 <div class="checkmark">✓</div>
-                <h1>task done!</h1>
-                <div class="subtitle">nice work, here's ur completion code</div>
+                <h1>lootlabs completed!</h1>
+                <div class="subtitle">nice work bro, here's ur code</div>
                 <div class="code-box" onclick="copyCode('${code}')">
                     ${code}
                     <div class="copy-hint">click to copy</div>
@@ -87,48 +93,41 @@
                     <h3>⚠️ read this:</h3>
                     <ol>
                         <li>copy the code above</li>
-                        <li>go back to the aerov4 key site</li>
-                        <li>paste the code in the box</li>
-                        <li>this code only works once per session</li>
+                        <li>go back to aerov4 key site</li>
+                        <li>paste the code</li>
+                        <li>this code only works ONCE</li>
                         <li>don't refresh or u lose it</li>
                     </ol>
                 </div>
-                <div class="warning">⚠️ this code can only be used once. after u paste it back on the key site u can generate ur actual key</div>
+                <div class="warning">⚠️ code expires in 30 mins and can only be used once</div>
             `;
         }
 
         window.onload = () => {
-            const stored = localStorage.getItem('aero_session');
-            if (!stored) {
-                showError('no session found', "u didn't come from the aerov4 key site. go there first and click 'start lootlabs'");
+            const data = JSON.parse(localStorage.getItem('aero_verify') || '{}');
+            
+            if (!data.code) {
+                showError('no code found', 'u didnt come from the right place. go to the aerov4 site and click "start lootlabs"');
                 return;
             }
 
-            let data;
-            try {
-                data = JSON.parse(stored);
-            } catch {
-                showError('session corrupted', 'something went wrong. go back to the key site and start over');
+            if (data.code.length !== 8 || !/^[A-Z0-9]+$/.test(data.code)) {
+                showError('invalid code', 'the code format looks wrong. try again from the aerov4 site');
                 return;
             }
 
-            if (!data.session || data.session.length !== 8) {
-                showError('invalid session', 'session code is messed up. go back and start over');
-                return;
-            }
-
-            if (hasBeenSeen(data.session)) {
-                showError('already used', "u already got this code. it only shows once. go back and start a new session if ur key expired");
+            if (isUsed(data.code)) {
+                showError('code already used', 'u already saw this code. it can only be used once. go back and get a new one');
                 return;
             }
 
             if (!checkReferrer()) {
-                showError('wrong referrer', "u didn't come from lootlabs. actually complete the task to get here properly");
+                showError('invalid referrer', 'u didnt come from lootlabs. complete the lootlabs task to get here properly');
                 return;
             }
 
-            markSeen(data.session);
-            showSuccess(data.session);
+            markUsed(data.code);
+            showSuccess(data.code);
         };
     </script>
 </body>
